@@ -11,18 +11,16 @@
 # foo(m)
 # print(m)
 
-from math import sqrt
+divisors = [2, 3, 5, 7, 11]
+factors = [10, 20, 30, 40, 25]
+non_primes = []
 
-n = int(input("Enter n: "))
+for factor in factors:
+    for divisor in divisors:
+        if factor % divisor == 0:
+            if factors.count(factor) > 0:
+                non_primes.append(factor)
+                break
 
-i = 2
-s = ""
-while i <= int(sqrt(n)):
-    if n % i == 0:  # n is divisible by i
-        s += str(i) + " * "
-        n = n // i
-    else:
-        i += 1
-
-s += str(n)  # append the last factor
-print(s)
+primes = [x for x in factors if x not in non_primes]
+print(primes)
