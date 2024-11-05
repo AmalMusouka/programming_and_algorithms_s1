@@ -69,3 +69,22 @@ if divisors == []:
 
 
 print(prime_factors)
+
+
+# n = int(input())
+# factor = 2
+# result = []
+# while factor * factor <= n:
+#     exp = 0
+#     while n % factor == 0:
+#         exp += 1
+#         n //= factor
+#         if exp == 1:
+#             result.append(f'f{factor}')
+#         elif exp > 1:
+#             result.append(f'{factor}^{exp}')
+#         factor += 1
+
+# if n>1:
+#     result.append(f'{n}')
+# print('*'.join(result))
