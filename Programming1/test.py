@@ -106,56 +106,142 @@
 # print(findPrime(100))
 
 
-def find_peaks():
-    import sys
+# def find_peaks():
+#     import sys
 
-    prev_height = None
-    curr_height = None
-    next_height = None
-    distance = 0
-    plateau_start = None
+#     prev_height = None
+#     curr_height = None
+#     next_height = None
+#     distance = 0
+#     plateau_start = None
 
-    for line in sys.stdin:
-        height = float(line.strip())
+#     for line in sys.stdin:
+#         height = float(line.strip())
 
-        if height < 0:
-            break  # End of input
+#         if height < 0:
+#             break  # End of input
 
-        if distance > 0:
-            prev_height = curr_height
+#         if distance > 0:
+#             prev_height = curr_height
 
-        curr_height = height
+#         curr_height = height
 
-        # Look ahead for the next height (next measurement)
-        if distance > 0:
-            next_line = sys.stdin.readline()
-            if next_line:
-                next_height = float(next_line.strip())
-            else:
-                next_height = None  # End of input
+#         # Look ahead for the next height (next measurement)
+#         if distance > 0:
+#             next_line = sys.stdin.readline()
+#             if next_line:
+#                 next_height = float(next_line.strip())
+#             else:
+#                 next_height = None  # End of input
 
-        # Check for a peak
-        if prev_height is not None and next_height is not None:
-            if curr_height > prev_height and curr_height > next_height:
-                # Found a peak
-                print(f"distance {distance} height {curr_height:.1f}")
-            elif curr_height == prev_height and curr_height > next_height:
-                # Found the end of a plateau
-                plateau_start = distance - 1  # The start of the plateau
-            elif curr_height > prev_height and curr_height == next_height:
-                # Found the start of a plateau
-                plateau_start = distance
+#         # Check for a peak
+#         if prev_height is not None and next_height is not None:
+#             if curr_height > prev_height and curr_height > next_height:
+#                 # Found a peak
+#                 print(f"distance {distance} height {curr_height:.1f}")
+#             elif curr_height == prev_height and curr_height > next_height:
+#                 # Found the end of a plateau
+#                 plateau_start = distance - 1  # The start of the plateau
+#             elif curr_height > prev_height and curr_height == next_height:
+#                 # Found the start of a plateau
+#                 plateau_start = distance
 
-        # Update for next iteration
-        distance += 1
-        if next_height is not None:
-            next_height = None  # Reset for the next round
+#         # Update for next iteration
+#         distance += 1
+#         if next_height is not None:
+#             next_height = None  # Reset for the next round
 
-    # Check if we had a plateau
-    if plateau_start is not None:
-        print(f"distance {plateau_start} height {curr_height:.1f}")
+#     # Check if we had a plateau
+#     if plateau_start is not None:
+#         print(f"distance {plateau_start} height {curr_height:.1f}")
 
 
-# Call the function when this script is executed
-if __name__ == "__main__":
-    find_peaks()
+# # Call the function when this script is executed
+# if __name__ == "__main__":
+#     find_peaks()
+
+
+import math
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+         return f'x= {self.x}, y= {self.y}'
+        
+    def distance_to(self, q):
+            x = self.x - q.x
+            y = self.y - q.y 
+            return math.sqrt(x ** 2 + y ** 2)
+    # Return the distance from this point
+    # to the origin
+        
+    def from_origin(self):
+        return self.distance_to(Point(0,0))
+    
+    def is_origin(self):
+        return self.from_origin() == 0.0
+    
+
+    # a line segment between two points
+    class Line:
+         def __init__(self, p, q):
+              self.p = p
+              self.q = q
+
+         def __refr__(self):
+              return f'{self.p} - {self.q}'
+         
+    
+         def length(self):
+              return self.p.distance_to(self.q)
+         
+
+    class Vector:
+        def __init__(self, *args):
+            self.a = args
+
+         # Return the number of dimensions of a vector.
+        def dims(self):
+            return len(self.a)
+         
+         # Return the length of a vector
+        def length(self):
+            s = 0
+            for x in self.a:
+                s += x * x
+                return math.sqrt(s)
+              
+         # Dot product of vectors
+        def dot(self, w):
+            assert self.dims() == w.dims()
+            s = 0
+            for i in range(self.dims()):
+                s += self.a[i] * w.a[i]
+                return s
+              
+        def add(self, w):
+            assert self.dims() == w.dims()
+            b = []
+            for i in range(self.dims()):
+                b.append(self.a[i] + w.a[i])
+            return Vector(*b)
+        
+
+
+    # Store a 24-hour time, eg: 15:36:02 or 11:18:25
+    class Time:
+        def __init__(self, h, m, s):
+            self.n = 3600 * h + 60 * m + s
+
+        # Add d seconds to self
+        def add(self, d):
+            x = (self.n + d) % (24 * 3600)
+            t = Time(0, 0, 0)
+            t.n = (self.n + d) % (24 * 3600)
+            return t
+        
+        def __repr__(self):
+            
