@@ -1,9 +1,7 @@
 import sys
 
-sum_seek = 0
-req_sum = 0
 
-
+# to check the rows
 def check_rows(matrix):
 
     row_sum = []
@@ -19,6 +17,7 @@ def check_rows(matrix):
     return output
 
 
+# to check the columns
 def check_columns(matrix):
 
     column_sum = []
@@ -37,6 +36,7 @@ def check_columns(matrix):
     return output
 
 
+# check the diagonals
 def check_diagonals(matrix):
 
     diagonal_sum_1 = 0
@@ -71,15 +71,17 @@ for line in sys.stdin:
         row.append(int(word))
 
     m.append(row)
-
+# find the difference between the sum of the row with 0 and the ones without
 rowsums = check_rows(m)
 diff = max(rowsums) - min(rowsums)
 zero_pos = findpos(m)
 zero_pos_row = list(zero_pos)[0]
 zero_pos_column = list(zero_pos)[1]
+
+# change the value of the 0 to the difference
 m[zero_pos_row][zero_pos_column] = diff
 
-
+# check if the square is magic
 columns = set(check_columns(m))
 rows = set(check_rows(m))
 diag = set(check_diagonals(m))
