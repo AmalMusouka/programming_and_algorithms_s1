@@ -244,4 +244,83 @@ class Point:
             return t
         
         def __repr__(self):
+
+
+
+## No Zeroes recursively ##
             
+# Write a function that takes an integer n and returns an integer
+# formed by removing all zeroes from the end of n's decimal representation. ex:
+            
+    # >>>no_zeros(54000)
+    # 54
+            
+def no_zeroes(n):
+    if n % 10 != 0:
+        return n
+    elif n == 0:
+        return 0
+    else:
+        return no_zeroes(n // 10)
+    
+## Recursive power
+    
+# a) write a recursive function that returns True if n is a power of 2.
+#
+# b) Genaralize the function: write a recursive function is_pow_of_k(k,n) that returns true if n is a power of k.
+
+def is_pow_of_k(k,n):
+    
+    if n == 1:
+        return True
+    elif n % k != 0:
+        return False
+    elif n <= 0:
+        return False
+    else:
+        return is_pow_of_k(k, n // k)
+    
+
+## Same as the First ##
+
+# Use recursion to write a function same_as_first(a) that returns the 
+# number of integers in an array a that are equal to its first element.
+    
+# def same_as_first(a):
+#     if len(a) <= 1:
+#         return len(a)
+#     count = 0
+#     if a[0] == a[-1]:
+#         count += 1
+#     count += same_as_first(a[:-1])
+#     return count
+# This runs O(n^2) so not ideal
+    
+
+def same_as_first(a):
+    if len(a) == 0:
+        return 0
+    
+    def helper(a, i, x):
+        if i == len(a):
+            return 0
+        count = helper(a, i + 1, x)
+        if a[i] == x:
+            count += 1
+        return count
+    
+    return helper(a, 0, a[0])
+
+
+# dictionaries comparison
+
+def same_dict(d1, d2):
+    if len(d1) != len(d2):
+        return False
+    for k,v in d1.items():
+        if k not in d2:
+            return False
+        if v!= d1[k]:
+            return False
+        else:
+            return True

@@ -43,3 +43,35 @@ def sumOfPrime(arr):
 
 
 print(sumOfPrime(x))
+
+
+# def sieve(n):
+#     if n < 2:
+#         return [False,False]
+
+#     prime = (n+1) * [True]
+#     prime[0] = prime[1] = False
+#     for i in range(2, math.isqrt(n) + 1):
+#         if prime[i]:
+#             for j in range(i * i, n + 1, i):
+#                 prime[j] = False
+
+#     return prime
+
+# data = []
+# for s in input().split():
+#     data.append(int(s))
+
+# is_prime = sieve(max(data))
+# result = []
+# for n in data:
+#     count = 0
+#     if n % 2 == 1:
+#         if n > 2 and is_prime[n-2]:
+#             count += 1
+#     else:
+#         for i in range(2, n // 2 + 1):
+#             if is_prime[i] and is_prime[n-1]:
+#                 count += 1
+#     result.append(count)
+# print(*result)

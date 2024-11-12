@@ -8,3 +8,21 @@ for line in sys.stdin.readlines():  # reading input
 
     for sentence in sentences:
         print(sentence.strip() + ".")
+
+
+# another solution
+
+# sentence = ''
+# for line in sys.stdin:
+#     for c in line:
+#         if sentence == '':
+#             if not c.isspace():
+#                 sentence += c
+#             else:
+#                 if c == '.':
+#                     print(sentence + '.')
+#                     sentence = ''
+#                 elif c == '\n':
+#                     sentence += ' '
+#                 else:
+#                     sentence += c

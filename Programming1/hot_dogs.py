@@ -26,3 +26,23 @@ for i in range(0, len(each_sale)):
 
 
 print(best_price)
+
+
+# another solution
+# faster if we know the range and the array is massive.
+
+# counts = 5001 * [0]
+# for line in sys.stdin:
+#     for s in line.split():
+#         counts[int(s)] += 1
+
+# cumulative = 0
+# best_profit = 0
+# best_price = 0
+# for price in range(5000, 0, -1):
+#     cumulative += counts[price]
+#     new_profit = cumulative * price
+#     if new_profit >= best_profit:
+#         best_profit = new_profit
+#         best_price = price
+# print(best_price)
