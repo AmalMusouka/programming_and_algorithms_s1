@@ -1,6 +1,7 @@
 import sys
 
 
+# find the consecutive 0's in the chessboard available to place the tile
 def count_tiles(tile_size, chessboard):
     tiles = 0
     for row in chessboard:
@@ -35,7 +36,7 @@ while True:
         board.append(row)
 
     columns = []
-
+    # build the transpose of the matrix to find the column 0's
     for i in range(chess_board_size):
         columns.append([sub[i] for sub in board])
 
