@@ -64,6 +64,7 @@ def merge_sort(a, b):
     merge(a, b, c)
     return c
 
+
 def merge_sort_i(a, b):
     if len(a) < 2:
         return
