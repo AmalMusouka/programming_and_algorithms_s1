@@ -21,25 +21,50 @@ import sys
 
 
 def extract_arguments():
+
+    case_sensitivity = False
     commands = sys.argv
-    return commands[1], commands[2], commands[3]
+    if commands[1] == '-i':
+        commands.pop(1)
+        case_sensitivity = True
+    return commands[1], commands[2], commands[3], case_sensitivity
 
 
-file_path_1 = extract_arguments()[0]
-file_path_2 = extract_arguments()[1]
-file_path_3 = extract_arguments()[2]
+file_path_1, file_path_2, file_path_3, case_sensitivity = extract_arguments()
+
 
 with open(file_path_1, 'r') as file_1, open(file_path_2, 'r') as file_2, open(file_path_3, 'w') as file_3:
+
+
     line_1 = file_1.readline()
     line_2 = file_2.readline()
-    line_list = []
 
 
     while line_1 != "" or line_2 != "":
-        if line_1 == "" or (line_2 != "" and line_2 < line_1):
-            file_3.write(line_2)
-            line_2 = file_2.readline()
 
-        elif line_2 == "" or  (line_1 != "" and line_1 < line_2):
-            file_3.write(line_1)
-            line_1 = file_1.readline()
+        if not case_sensitivity:
+            if line_1 == "" or (line_2 != "" and line_2 < line_1):
+                file_3.write(line_2)
+                line_2 = file_2.readline()
+
+            elif line_2 == "" or  (line_1 != "" and line_1 < line_2):
+                file_3.write(line_1)
+                line_1 = file_1.readline()
+
+        else:
+            line_1_small = line_1.lower()
+            line_2_small = line_2.lower()
+
+            if line_1_small == "" or (line_2_small != "" and line_2_small < line_1_small):
+                file_3.write(line_2)
+                line_2 = file_2.readline()
+
+            elif line_2_small == "" or (line_1_small != "" and line_1_small < line_2_small):
+                file_3.write(line_1)
+                line_1 = file_1.readline()
+
+
+
+
+
+
