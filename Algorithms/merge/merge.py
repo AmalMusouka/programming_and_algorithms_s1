@@ -25,4 +25,21 @@ def extract_arguments():
     return commands[1], commands[2], commands[3]
 
 
-print(extract_arguments())
+file_path_1 = extract_arguments()[0]
+file_path_2 = extract_arguments()[1]
+file_path_3 = extract_arguments()[2]
+
+with open(file_path_1, 'r') as file_1, open(file_path_2, 'r') as file_2, open(file_path_3, 'w') as file_3:
+    line_1 = file_1.readline()
+    line_2 = file_2.readline()
+    line_list = []
+
+
+    while line_1 != "" or line_2 != "":
+        if line_1 == "" or (line_2 != "" and line_2 < line_1):
+            file_3.write(line_2)
+            line_2 = file_2.readline()
+
+        elif line_2 == "" or  (line_1 != "" and line_1 < line_2):
+            file_3.write(line_1)
+            line_1 = file_1.readline()
