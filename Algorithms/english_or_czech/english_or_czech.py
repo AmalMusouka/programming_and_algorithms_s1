@@ -22,30 +22,12 @@ cz_freq = [8.421, 0.822, 0.740, 3.475, 7.562, 0.084, 0.092, 1.356, 6.073, 1.433,
 
 
 
-def get_eng(count_chars):
-    eng_sum = 0
 
-    for i in range(len(en_freq)):
-        en_val = (en_freq[i])/100
-
-        if i in count_chars.keys():
-            for key, value in count_chars.items():
-                if i == key:
-                    eng_sum += ((value/number_of_char - en_val)**2)/en_val
-
-
-        else:
-            eng_sum += ((0 - en_val)**2)/en_val
-
-
-    return eng_sum
-
-
-def get_cz(count_chars):
+def get_count(count_chars, freq):
     cz_sum = 0
 
-    for i in range(len(cz_freq)):
-        cz_val = (cz_freq[i]) / 100
+    for i in range(len(freq)):
+        cz_val = (freq[i]) / 100
 
         if i in count_chars.keys():
             for key, value in count_chars.items():
@@ -73,8 +55,8 @@ for char in input_string:
         else:
             count_chars[ord(char.lower())-97] = 1
 
-eng = get_eng(count_chars)
-cz = get_cz(count_chars)
+eng = get_count(count_chars, en_freq)
+cz = get_count(count_chars, cz_freq)
 
 print(f"Match with English: {eng:.2f}")
 print(f"Match with Czech: {cz:.2f}")
