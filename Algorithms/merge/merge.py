@@ -23,6 +23,7 @@ import sys
 def extract_arguments():
 
     case_sensitivity = False
+    # _, *rest, f1, f2, f3 = sys,argv  ##f1,f2,f3 takes the last three arguments and rest keeps the rest##
     commands = sys.argv
     if commands[1] == '-i':
         commands.pop(1)
