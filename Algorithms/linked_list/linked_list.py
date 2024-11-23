@@ -42,12 +42,13 @@ class Node:
 class LinkedList:
     def __init__(self, list):
         node_list = [Node(value) for value in list]
-
-        for node_index in range(len(node_list) - 1):
-            node = node_list[node_index]
-            node.next = node_list[node_index + 1]
-
-        self.head = node_list[0]
+        if list == []:
+            self.head = None
+        else:
+            for node_index in range(len(node_list) - 1):
+                node = node_list[node_index]
+                node.next = node_list[node_index + 1]
+            self.head = node_list[0]
 
     def to_list(self):
         node = self.head
@@ -71,16 +72,26 @@ class LinkedList:
 
     def has(self, x):
         node = self.head
+        has = False
         while node is not None:
             if node.value == x:
-                return True
-            elif node.next is None:
-                return False
+                has = True
+                break
+            elif node is None:
+                has = False
+                break
             else:
                 node = node.next
 
+        return has
+
+
     def delete(self, x):
         node = self.head
+        if node is None:
+            return
+        if x == node.value:
+            self.head = node.next
         while node.next is not None:
             if node.next.value == x:
                 node.next = node.next.next
@@ -90,38 +101,41 @@ class LinkedList:
 
     def rotate(self):
         node = self.head
-        first = self.head
+        if node is None or node.next is None:
+            self.head = node
+        else:
+            while node is not None:
+                if node.next.next is None:
+                    node.next.next = self.head
+                    self.head = node.next
+                    node.next = None
+                    break
+
+                else:
+                    node = node.next
+
+    # def printer(self, m):
+    #     return print(m)
+
+    def starts_with(self, m):
+        node = self.head
+        node2 = m.head
 
         while node is not None:
-            if node.next.next is None:
-                node.next.next = first
-                node.next = None
-                break
-
-            else:
+            if node2 is None:
+                return True
+            elif node2.value == node.value:
+                node2 = node2.next
                 node = node.next
+        return False
 
-    def printer(self, m):
-        return print(m)
 
-    def startswith(self, m):
-        node = self.head
-        start = False
-
-        for value in m:
-            if node.value == value:
-                node = node.next
-                start = True
-            else:
-                start = False
-
-        self.printer(start)
 
     def contains(self, m):
         node = self.head
         contain = False
 
-        for number in m:
+        for number in [m]:
             while node is not None:
                 if node.value == number:
                     contain = True
@@ -130,7 +144,7 @@ class LinkedList:
                     node = node.next
                     contain = False
 
-        self.printer(contain)
+        return contain
 
     def ends_with(self, m):
         node = self.head
@@ -147,4 +161,16 @@ class LinkedList:
             else:
                 node = node.next
 
-        self.printer(end)
+        return end
+
+
+l = LinkedList([2, 7, 4, 9, 18, 19, 22])
+m = LinkedList([2, 7, 4])
+n = LinkedList([9, 18, 19])
+e = LinkedList([])
+
+print(l.starts_with(m))
+print(m.starts_with(l))
+print(l.starts_with(e))
+# print(l.contains(n))
+# print(m.contains(l))
