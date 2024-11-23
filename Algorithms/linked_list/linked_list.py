@@ -137,47 +137,35 @@ class LinkedList:
     def contains(self, m):
         node = self.head
         node2 = m.head
-        contain = False
 
-        while node is not None:
-            if node2 is None:
-                return True
-
-            if node2.value == node.value:
+        while node2 is not None:
+            if node is None:
+                return False
+            if node.next is None and node2.next is not None:
+                return False
+            if node.value == node2.value:
                 node2 = node2.next
                 node = node.next
-                contain = True
             else:
-                node2 = node2.next
                 node = node.next
-                contain = False
 
-        return contain
+        return True
 
 
 
     def ends_with(self, m):
         node = self.head
-        end = False
-        index = 0
+        node2 = m.head
 
-        while node is not None and index != len(m):
-            if node.value == m[index]:
-                if node.next is None:
-                    end = True
-                    break
+        while node is not None:
+            if node2 is None:
+                return False
+            if node.next is None and node2.next is None:
+                return True
+            if node.value == node2.value:
+                node2 = node2.next
                 node = node.next
-                index += 1
             else:
                 node = node.next
+        return False
 
-        return end
-
-
-l = LinkedList([2, 7, 4, 9, 18, 19, 22])
-m = LinkedList([2, 7, 4])
-n = LinkedList([9, 18, 19])
-e = LinkedList([])
-#
-# print(l.contains(n))
-print(m.contains(l))
