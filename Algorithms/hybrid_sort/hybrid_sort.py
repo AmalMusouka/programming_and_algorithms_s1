@@ -24,24 +24,22 @@
 #
 # Finally, add top-level code that reads a single line of standard input containing integers to be sorted, separated by spaces. The code should sort the integers using your sorting implementation. You don't need to print out the sorted sequence at the end; the output from step 4 above is enough.
 
-def insertion_sort(arr):
-    n = len(arr)
-    count = 0
-    for i in range(n):
-        t = arr[i]
-        j = i - 1
-        while j >= 0 and arr[j] > t:
-            count += 1
-            arr[j + 1] = arr[j]
-            j -= 1
+# insertion sort for an array a
+def insertion_sort(a, i, j, count):
+    s = '    '
+    for index in range(i,j):
+        t = a[index]
+        prev = index - 1
+        while prev >= 0 and a[prev] > t:
+            a[prev + 1] = a[prev]
+            prev -= 1
+        a[prev + 1] = t
+    count += 1
+    print(f"{count * s}insertion sort()")
 
-        arr[j + 1] = t
 
-
-    print(f"{count}*      +" "insertion sort ({count} compares")
-
+# merge sorted subarrays arr[d:e] and arr[e:f] into the subarray arr[d:f]
 def merge(arr, d, e, f):
-    print(f"sorting a[]")
     a = arr[d:e]  # copy of left half
     b = arr[e:f]  # copy of right half
 
@@ -64,31 +62,50 @@ def merge(arr, d, e, f):
 
 
 # sort only elements a[i:j], i.e. a[i .. (j - 1)]
-def merge_sort_range(a, i, j, count = 0):
+def merge_sort_range(a, i, j, count):
     if j - i < 2:
         return
-    print(count)
-    print(f"sorting a[{i}:{j}] = {a}")
+    count+= 1
     mid = (i + j) // 2
-    if len(a) <= 10:
-        insertion_sort(a)
+    s = '    '
+    run = 0
+
+    if len(a[i:j]) <= 10:
+        string = ' '.join(str(value) for value in a[i:j])
+        print(f"{count * s}sorting a[{i}:{j}] = [{string}]")
+
+        insertion_sort(a, i, j, count)
+
+        new_string = ' '.join(str(value) for value in a[i:j])
+        print(f"{count * s}sorted a[{i}:{j}] = [{new_string}]")
     else:
-        count += 1
+        left = ' '.join(str(value) for value in a[i:5])
+        right = ' '.join(str(value) for value in a[len(a) - 5 :])
+        print(f"{count * s}sorting a[{i}:{j}] = [{left} ... {right}]")
+
         merge_sort_range(a, i, mid, count)  # recursively sort left half
         merge_sort_range(a, mid, j, count)  # recursively sort right half
 
-    merge(a, i, mid, j)  # merge left and right halves together
+        merge(a, i, mid, j)# merge left and right halves together
+        run += 1
+        if run > 0:
+            print(f"{count * s}merged a[{i}:{mid}] + a[{mid}:{j} -> a[{i}:{j}]")
+        else:
+            print(f"{(count+1) * s}skipped merge!")
+        new_left = ' '.join(str(value) for value in a[i:5])
+        new_right = ' '.join(str(value) for value in a[len(a) - 5 :])
+        print(f"sorted a[{i}:{j}] = [{new_left} ... {new_right}]")
+
 
 
 # merge sort an entire array
 def merge_sort(a):
-    merge_sort_range(a, 0, len(a))
-    print(f"sorted a = {a}")
+    count = 0
+    merge_sort_range(a, 0, len(a), count)
 
-
-
-arr = [4, 2, 6, 8, 10, 1, 17, 3, 5, 18, 9, 1, 5, 20, 0, 100]
-
-
-merge_sort(arr)
-print(arr)
+arr = [4,2,6,8,10,1,17,3,5,18,9,1,5,2,0,100]
+arr2 = [1,5,3,4,2,6,7,8,9,10,11,12,13,16,15,14,17,18,19,20]
+# merge_sort(arr)
+merge_sort(arr2)
+# print(arr)
+print(arr2)
