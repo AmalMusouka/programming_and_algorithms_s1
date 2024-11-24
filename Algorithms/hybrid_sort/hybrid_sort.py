@@ -26,16 +26,22 @@
 
 # insertion sort for an array a
 def insertion_sort(a, i, j, count):
+    compare = 0
     s = '    '
     for index in range(i,j):
         t = a[index]
         prev = index - 1
-        while prev >= 0 and a[prev] > t:
+        ready_to_compare = True
+        while prev >= i and a[prev] > t:
+            compare += 2
+            ready_to_compare = False
             a[prev + 1] = a[prev]
             prev -= 1
+        if ready_to_compare is True:
+            compare += 1
         a[prev + 1] = t
     count += 1
-    print(f"{count * s}insertion sort()")
+    print(f"{count * s}insertion sort({compare} comparison)")
 
 
 # merge sorted subarrays arr[d:e] and arr[e:f] into the subarray arr[d:f]
@@ -60,6 +66,13 @@ def merge(arr, d, e, f):
             arr[k] = b[j]
             j += 1
 
+def is_sorted(a):
+    for i in range(len(a) - 1):
+        if a[i] > a[i + 1]:
+            return False
+
+    return True
+
 
 # sort only elements a[i:j], i.e. a[i .. (j - 1)]
 def merge_sort_range(a, i, j, count):
@@ -68,7 +81,6 @@ def merge_sort_range(a, i, j, count):
     count+= 1
     mid = (i + j) // 2
     s = '    '
-    run = 0
 
     if len(a[i:j]) <= 10:
         string = ' '.join(str(value) for value in a[i:j])
@@ -84,14 +96,14 @@ def merge_sort_range(a, i, j, count):
         print(f"{count * s}sorting a[{i}:{j}] = [{left} ... {right}]")
 
         merge_sort_range(a, i, mid, count)  # recursively sort left half
-        merge_sort_range(a, mid, j, count)  # recursively sort right half
+        merge_sort_range(a, mid, j, count) # recursively sort right half
 
-        merge(a, i, mid, j)# merge left and right halves together
-        run += 1
-        if run > 0:
+        if not is_sorted(a) :
+            merge(a, i, mid, j)# merge left and right halves together
             print(f"{count * s}merged a[{i}:{mid}] + a[{mid}:{j} -> a[{i}:{j}]")
         else:
             print(f"{(count+1) * s}skipped merge!")
+
         new_left = ' '.join(str(value) for value in a[i:5])
         new_right = ' '.join(str(value) for value in a[len(a) - 5 :])
         print(f"sorted a[{i}:{j}] = [{new_left} ... {new_right}]")
