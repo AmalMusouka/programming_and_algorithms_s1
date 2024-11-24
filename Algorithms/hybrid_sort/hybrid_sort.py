@@ -31,17 +31,16 @@ def insertion_sort(a, i, j, count):
     for index in range(i,j):
         t = a[index]
         prev = index - 1
-        ready_to_compare = True
+
         while prev >= i and a[prev] > t:
-            compare += 2
-            ready_to_compare = False
+            compare += 1
             a[prev + 1] = a[prev]
             prev -= 1
-        if ready_to_compare is True:
+        if (prev >=i) and not (a[prev] > t):
             compare += 1
         a[prev + 1] = t
     count += 1
-    print(f"{count * s}insertion sort({compare} comparison)")
+    print(f"{count * s}insertion sort ({compare} compares)")
 
 
 # merge sorted subarrays arr[d:e] and arr[e:f] into the subarray arr[d:f]
@@ -66,9 +65,9 @@ def merge(arr, d, e, f):
             arr[k] = b[j]
             j += 1
 
-def is_sorted(a):
-    for i in range(len(a) - 1):
-        if a[i] > a[i + 1]:
+def is_sorted(a, i, j):
+    for index in range(i, j - 1):
+        if a[index] > a[index + 1]:
             return False
 
     return True
@@ -76,48 +75,47 @@ def is_sorted(a):
 
 # sort only elements a[i:j], i.e. a[i .. (j - 1)]
 def merge_sort_range(a, i, j, count):
-    if j - i < 2:
+    if j - i < 2 and not (len(a) <= 1):
         return
     count+= 1
     mid = (i + j) // 2
     s = '    '
 
-    if len(a[i:j]) <= 10:
+    if len(a[i:j]) <= 10 or len(a) <= 1:
         string = ' '.join(str(value) for value in a[i:j])
         print(f"{count * s}sorting a[{i}:{j}] = [{string}]")
-
-        insertion_sort(a, i, j, count)
+        if len(a) > 1:
+            insertion_sort(a, i, j, count)
 
         new_string = ' '.join(str(value) for value in a[i:j])
         print(f"{count * s}sorted a[{i}:{j}] = [{new_string}]")
     else:
-        left = ' '.join(str(value) for value in a[i:5])
-        right = ' '.join(str(value) for value in a[len(a) - 5 :])
+        left = ' '.join(str(value) for value in a[i:i+5])
+        right = ' '.join(str(value) for value in a[j-5:j])
         print(f"{count * s}sorting a[{i}:{j}] = [{left} ... {right}]")
 
         merge_sort_range(a, i, mid, count)  # recursively sort left half
         merge_sort_range(a, mid, j, count) # recursively sort right half
 
-        if not is_sorted(a) :
+        if not is_sorted(a, i, j) :
             merge(a, i, mid, j)# merge left and right halves together
-            print(f"{count * s}merged a[{i}:{mid}] + a[{mid}:{j} -> a[{i}:{j}]")
+            print(f"{(count+1) * s}merged a[{i}:{mid}] + a[{mid}:{j}] -> a[{i}:{j}]")
         else:
             print(f"{(count+1) * s}skipped merge!")
 
-        new_left = ' '.join(str(value) for value in a[i:5])
-        new_right = ' '.join(str(value) for value in a[len(a) - 5 :])
-        print(f"sorted a[{i}:{j}] = [{new_left} ... {new_right}]")
+        new_left = ' '.join(str(value) for value in a[i:i+5])
+        new_right = ' '.join(str(value) for value in a[j-5:j])
+        print(f"{count * s}sorted a[{i}:{j}] = [{new_left} ... {new_right}]")
 
 
 
 # merge sort an entire array
 def merge_sort(a):
-    count = 0
+    count = -1
     merge_sort_range(a, 0, len(a), count)
 
-arr = [4,2,6,8,10,1,17,3,5,18,9,1,5,2,0,100]
-arr2 = [1,5,3,4,2,6,7,8,9,10,11,12,13,16,15,14,17,18,19,20]
-# merge_sort(arr)
-merge_sort(arr2)
-# print(arr)
-print(arr2)
+
+string = str(input())
+arr = [int(val) for val in string.split()]
+
+merge_sort(arr)
