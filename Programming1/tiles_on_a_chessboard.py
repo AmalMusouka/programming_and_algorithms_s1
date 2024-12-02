@@ -41,3 +41,5 @@ while True:
         columns.append([sub[i] for sub in board])
 
     print(count_tiles(tile_size, board) + count_tiles(tile_size, columns))
+
+

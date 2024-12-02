@@ -17,55 +17,115 @@
 # If a node has two children, remove() should replace its value with the smallest value in the node's right subtree.
 
 class Node:
-    def __init__(self, val, right=None, left=None):
-        self.val = val
-        self.right = right
+    def __init__(self, value, left=None, right=None):
         self.left = left
+        self.right = right
+        self.value = value
+
+    def _repr_(self):
+        return str(self.value)
+
+    # gets the leaf name
+    def leaf_name_of_value(self, value):
+        return 'left' if self.value > value else 'right'
+
+    # gets the leaf name
+    def leaf_name_of_node(self, node):
+        return self.leaf_name_of_value(node.value)
+
+    def get_leaf_node_for_leaf(self, leaf):
+        return getattr(self, leaf)
+
+    def get_leaf_node_for_node(self, node):
+        leaf = self.leaf_name_of_node(node)
+        return self.get_leaf_node_for_leaf(leaf)
+
+    def add_leaf(self, node):
+        leaf = self.leaf_name_of_node(node)
+        setattr(self, leaf, node)
+        return node
+
 
 class TreeSet:
     def __init__(self):
         self.root = None
         self.num_of_val = 0
 
-    def contains(self, x):
-        n = self.root
-        while n is not None:
-            if x == n.val:
-                return True
-            if x < n.val:
-                n = n.left
-            else:
-                n = n.right
-        return False
+    def increment_size(self):
+        self.num_of_val += 1
 
-    # add a value, or do nothing if already present
-    def add(self, x):
-        n = Node(x, None, None)  # new node to add
-        p = self.root
-        if p is None:
-            self.root = n
-            self.num_of_val = 1
-            return
+    def decrement_size(self):
+        self.num_of_val -= 1
 
-        while True:
-            if x == p.val:
-                return  # already present
-            elif x < p.val:
-                if p.left is None:
-                    p.left = n
-                    self.num_of_val += 1
-                    return
-                else:
-                    p = p.left
-            else:  # x > p.val
-                if p.right is None:
-                    p.right = n
-                    self.num_of_val += 1
-                    return
-                else:
-                    p = p.right
+    def get_parent(self, value):
+        parent = None
+        current_node = self.root
 
+        while current_node and current_node.value != value:
+            next_leaf = current_node.leaf_name_of_value(value)
+            parent = current_node
+            current_node = current_node.get_leaf_node_for_leaf(next_leaf)
 
+        return parent
+
+    def get_node(self, value):
+        parent = self.get_parent(value)
+
+        if not parent and self.root.value == value:
+            return self.root
+
+        if not parent:
+            return None
+
+        node_leaf = parent.leaf_name_of_value(value)
+        return parent.get_leaf_node_for_leaf(node_leaf)
+
+    # recursive get noe
+    def get_node_r(self, value, parent):
+        if not parent:
+            return None
+
+        if parent.value == value:
+            return parent
+
+        leaf = parent.leaf_name_of_value(value)
+        leaf_node = parent.get_leaf_node_for_leaf(leaf)
+
+        if not leaf_node:
+            return None
+
+        if leaf_node.value == value:
+            return leaf_node
+
+        return self.get_node_r(value, leaf_node)
+
+    def get_node_from_root(self, value):
+        return self.get_node_r(value, self.root)
+
+    def add(self, value):
+        node = Node(value)
+
+        if self.root is None:
+            self.root = node
+            self.increment_size()
+            return True
+
+        parent = self.root
+
+        while parent:
+            if parent.value == node.value:
+                return False
+
+            parent_leaf = parent.get_leaf_node_for_node(node)
+
+            if parent_leaf:
+                parent = parent_leaf
+                continue
+
+            parent.add_leaf(node)
+            self.increment_size()
+
+        return True
 
 
     def min(self):
@@ -75,7 +135,7 @@ class TreeSet:
 
         while smallest.left is not None:
                 smallest = smallest.left
-        return smallest.val
+        return smallest.value
 
     def max(self):
         largest = self.root
@@ -84,95 +144,132 @@ class TreeSet:
 
         while largest.right is not None:
             largest = largest.right
-        return largest.val
+        return largest.value
+
+    def contains(self, x):
+        n = self.root
+        while n is not None:
+            if x == n.value:
+                return True
+            if x < n.value:
+                n = n.left
+            else:
+                n = n.right
+        return False
+
+    # smallest node including node and subtree
+    def smallest_node(self, node):
+        if node.left:
+            return self.smallest_node(node.left)
+        return node
+
+
+    def remove(self, value):
+        parent = self.get_parent(value)
+        node = self.get_node_from_root(value)
+
+        if not node:
+            return False
+
+        # handle 2 leafs
+        if node.left and node.right:
+            smallest_node = self.smallest_node(node.right)
+            self.remove(smallest_node.value)
+
+            if parent is None:
+                prev_root = self.root
+                self.root = smallest_node
+                smallest_node.left = prev_root.left
+                smallest_node.right = prev_root.right
+                return
+
+            parent_leaf = parent.leaf_name_of_node(node)
+            setattr(parent, parent_leaf, smallest_node)
+
+            if node.right:
+                smallest_node.right = node.right
+
+            if node.left:
+                smallest_node.left = node.left
+
+            return
+
+        # handle 1 leaf
+        if node.left or node.right:
+            node_only_leaf = 'left' if node.left else 'right'
+
+            if node is self.root:
+                self.root = getattr(node, node_only_leaf)
+                self.decrement_size()
+                return node
+
+            parent_leaf = parent.leaf_name_of_node(node)
+            setattr(parent, parent_leaf, getattr(node, node_only_leaf))
+            self.decrement_size()
+            return node
+
+        # handle no leafs
+        if node is self.root:
+            # root node
+            self.root = None
+            self.decrement_size()
+            return None
+
+        parent_leaf = parent.leaf_name_of_node(node)
+        setattr(parent, parent_leaf, None)
+
+        self.decrement_size()
+
+        return node
+
+    def print(self, node, level=0):
+        if node is not None:
+            self.print(node.right, level + 1)
+            print('   ' * 4 * level + '-> ' + str(node.value))
+            self.print(node.left, level + 1)
+
+    def print_tree(self):
+        self.print(self.root)
+        print('\n\n')
 
     def size(self):
         return self.num_of_val
 
+    def count_helper(self, node, lo, hi):
+        count = 0
 
-    def find_next_smallest(self, x):
-        if x.right is None and x.left is None:
-            return None
-        elif x.left is None:
-            return x.right
-        else:
-            return self.find_next_smallest(x.left)
+        if node is None:
+            return 0
 
+        if lo <= node.value <= hi:
+            count += 1
 
-    def remove(self, x):
-        n = self.root
-        if n is None:
-            return
+        if node.left and node.value >= lo:
+            count += self.count_helper(node.left, lo, hi)
 
-        while n is not None:
-            if self.count == 1 and x == n.val:
-                self.root = None
-                self.count -= 1
-            if x == n.right.val:
-                new_curr = self.find_next_smallest(n.right)
-                n.right = new_curr
-                self.num_of_val -= 1
-                return
-            elif x == n.left.val:
-                new_curr = self.find_next_smallest(n.left)
-                n.left = new_curr
-                self.num_of_val -= 1
-                return
-            elif x < n.val:
-                n = n.left
-            else:
-                n = n.right
+        if node.right and node.value <= hi:
+            count += self.count_helper(node.right, lo, hi)
+
+        return count
 
 
     def count(self, lo, hi):
-        p = self.root
-        num_of_x = 0
+        node = self.root
 
-        if p is None:
+        if hi < lo:
             return 0
 
-        while p is not None:
-            if lo <= p.val <= hi:
-                num_of_x += 1
-            if p.right is not None:
-                if lo <= p.right.val <= hi:
-                    p = p.right
-                else:
-                    p = p.left
-            elif p.left is not None:
-                if lo <= p.left.val <= hi:
-                    p = p.left
-            else:
-                return num_of_x
+        if node is None:
+            return 0
 
-        return num_of_x
-
-
-
-
-
-
-
-
-
+        return self.count_helper(node, lo, hi)
 
 
 #
 # def sample1():
 #     t = TreeSet()
-#     print(t.min())
-#     print(t.max())
-#     for x in [4, 2, 8, 6, 10]:
+#     for x in [10, 30, 25, 40, 28]:
 #         t.add(x)
-#     t.add(4)
-#     print('size =', t.size())
-#     print('min =', t.min())
-#     print('max =', t.max())
-#     print('t.contains(8) =', t.contains(8))
-#
-#     t.remove(8)
-#     print('t.contains(8) =', t.contains(8))
-#     print('size =', t.size())
-#     print('t.count(3, 7) =', t.count(3, 7))
+#     print(t.count(0, 30))
 #
 # sample1()

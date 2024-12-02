@@ -169,3 +169,10 @@ class LinkedList:
                 node = node.next
         return False
 
+
+
+p = LinkedList([])
+
+print(p.to_list())
+
+
