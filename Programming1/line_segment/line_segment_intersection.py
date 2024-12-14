@@ -48,19 +48,6 @@ def get_orientation(a, b, c, d):
     return orientation_1, orientation_2
 
 
-# def get_angle(line_ab, line_ac):
-#     mod_line_ab = math.sqrt(line_ab[0] ** 2 + line_ab[1] ** 2)
-#     mod_line_ac = math.sqrt(line_ac[0] ** 2 + line_ac[1] ** 2)
-#
-#     dot_product = line_ab[0] * line_ac[0] + line_ab[1] * line_ac[1]
-#
-#
-#     angle = math.degrees(math.acos(dot_product / (mod_line_ab * mod_line_ac)))
-#
-#
-#     return math.floor(angle)
-
-
 def num_from_input(input_string):
     list_of_numbers = []
 
@@ -96,7 +83,7 @@ def intersection(input_string):
 
     #checking if the orientations are all 0 to check for collinearity
     if (orientation_1 == orientation_2 == (0, 0)) or (orientation_3 == orientation_4 == (0, 0)):
-        if check_overlapping(a, b, c, d):
+        if check_overlapping(a, b, c, d) or check_overlapping(c, d, a, b):
             result = True
 
 
