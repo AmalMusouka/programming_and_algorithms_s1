@@ -9,19 +9,14 @@
 # m.remove(key) - remove a key from the hash table if present
 import sys
 
-
-# Hash a string to an unsigned 32-bit integer.
-
-
-
 class Node:
     def __init__(self, key, value, next = None):
         self.key = key
         self.value = value
         self.next = next
 
- # def __repr__(self):
-    #     return "Node value: " + str(self.value)
+    # def __repr__(self):
+    #     return "Node value: " + str(self.key)
 
 class HashMap:
     def __init__(self, buckets=5, size=0):
@@ -39,24 +34,25 @@ class HashMap:
         return self.size/self.buckets
 
     def resize(self):
-        new_table = [None] * self.buckets
         old_table = self.table
-        self.table = new_table
+        self.table = [None] * self.buckets
         self.rehash(old_table)
         print(f"resizing to {self.buckets} buckets")
 
-
     def rehash(self, old_table):
+        old_table_size = self.size
         self.size = 0
-        for i in range(len(old_table)):
-            if old_table[i] is not None:
-                current_node = old_table[i]
-                self.set(current_node.key, current_node.value)
-                while current_node.next is not None:
-                    current_node = current_node.next
+        count = 0
+        if count < old_table_size:
+            for i in range(len(old_table)) :
+                if old_table[i] is not None:
+                    current_node = old_table[i]
                     self.set(current_node.key, current_node.value)
-            else:
-                continue
+                    count += 1
+                    while current_node.next is not None:
+                        current_node = current_node.next
+                        self.set(current_node.key, current_node.value)
+                        count += 1
 
     def set(self, key, value=1):
         index = self.my_hash(key)
@@ -78,7 +74,6 @@ class HashMap:
                 current_node = Node(key, value, None)
                 prev_node.next = current_node
                 self.size += 1
-
 
         if self.load_index() > 4:
             self.buckets *= 2
@@ -124,10 +119,8 @@ class HashMap:
 
 def words_from_string(string):
     words = []
-
     word = ''
     for letter in string:
-
         if ord(letter) > ord("z") or ord(letter) < ord("a"):
             if word != '':
                 words.append(word)
@@ -135,26 +128,25 @@ def words_from_string(string):
                 continue
         else:
             word += letter
-
     return words
 
 
 hash_table = HashMap()
-
 input_string = ""
-
-while True:
-    line = input()
-    if line == "== END ==":
-        break
-    input_string += line + " "
-
 word_occ = []
-for line in sys.stdin.readlines():
-    word_occ.append(line.lower().strip())
+text_ended = False
+
+for line in sys.stdin:
+   if line.strip() == '== END ==':
+     text_ended = True
+     continue
+   if text_ended:
+       word_occ.append(line.strip().lower())
+   else:
+       input_string += line.lower()
 
 for word in words_from_string(input_string.lower()):
-    hash_table.set(word)
+    hash_table.set(word.strip())
 
 print(f"unique words = {hash_table.size}")
 
