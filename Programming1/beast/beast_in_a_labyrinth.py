@@ -61,7 +61,7 @@ class Beast:
         return self.row - 1, self.column
 
     # return the index of the position to the right of the beast to check whether it is empty or not
-    def right(self):
+    def right_index(self):
         return {'>': self.row_inc_col_same,
                 '^': self.row_same_col_inc,
                 'v': self.row_same_col_dec,
@@ -75,7 +75,7 @@ class Beast:
                 'v': '<'}[self.direction]
 
     # return the index of the position right in front of the beast to check whether it is empty or not
-    def straight(self):
+    def straight_index(self):
         return {'>': self.row_same_col_inc,
                 '^': self.row_dec_col_same,
                 'v': self.row_inc_col_same,
@@ -90,8 +90,8 @@ class Beast:
 
     #check the corresponding directions of the beast and decide where to move or rotate
     def check_surrounding(self):
-        right_coordinates = self.right()
-        straight_coordinates = self.straight()
+        right_coordinates = self.right_index()
+        straight_coordinates = self.straight_index()
 
         if self.lab.is_empty(right_coordinates[0], right_coordinates[1]) and not self.turned_right:
             self.turned_right = True
@@ -103,7 +103,7 @@ class Beast:
             self.turned_right = False
             return self.rotate_left()
 
-    def num_of_moves(self, n):
+    def move_n_times(self, n):
         for _ in range(n):
             self.check_surrounding()
 
@@ -124,7 +124,7 @@ class Beast:
         return self.print_as_str(self.lab.matrix)
 
     def move_straight(self):
-        straight_coordinates = self.straight()
+        straight_coordinates = self.straight_index()
         self.lab.matrix[self.row][self.column] = "."
         self.lab.matrix[straight_coordinates[0]][straight_coordinates[1]] = self.direction
         self.row = straight_coordinates[0]
@@ -140,15 +140,13 @@ class Beast:
 
         return self.print_as_str(self.lab.matrix)
 
-
-sample_input = """XXXXXXX
-X.XvX.X
-X.X.X.X
-X.....X
-XXXXXXX"""
+num_of_moves = int(input())
+sample_input = ""
+for line in sys.stdin:
+    sample_input += line
 
 lab = Labyrinth(sample_input)
 beast_position = lab.find_beast()
 beast = Beast(beast_position[0], beast_position[1], lab.matrix[beast_position[0]][beast_position[1]], lab)
 
-beast.num_of_moves(15)
+beast.move_n_times(num_of_moves)
