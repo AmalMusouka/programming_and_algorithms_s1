@@ -219,14 +219,14 @@ class Point:
             assert self.dims() == w.dims()
             s = 0
             for i in range(self.dims()):
-                s += self.a[i] * w.a[i]
+                s += self.a[i] * w.queue[i]
                 return s
               
         def add(self, w):
             assert self.dims() == w.dims()
             b = []
             for i in range(self.dims()):
-                b.append(self.a[i] + w.a[i])
+                b.append(self.a[i] + w.queue[i])
             return Vector(*b)
         
 
