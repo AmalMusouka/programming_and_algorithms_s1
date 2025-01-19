@@ -1,0 +1,27 @@
+BATTLESHIPS
+
+Battleship (also known as Battleships) is a strategy type guessing game for two players.
+It is played on ruled grids (paper or board) on which each player's fleet of warships are marked.
+The locations of the fleets are concealed from the other player. Players alternate turns calling "shots" at the other player's ships, and the objective of the game is to destroy the opposing player's fleet.
+
+In this version of battleships, you play against an AI rather than another user.
+The game starts off with the user given the option to add ships that are a certain length to the grid via a naming system that's used for board/grid games.
+The naming system is as follows:
+    1. Each row is given an alphabet from 'a' to 'j'(can be either capital or not) from top to bottom. This will be the first character in the user's grid slot.
+    2. Each column is given a number from 0 to 9 from left to right. This is the second character in the user's grid slot.
+    - Each grid slot looks like one of the following. eg: 'a5', 'h2', 'c9', 'f4', ...
+    3. The grid slot chosen is where the left end of the ship begins and the length determines where the ship ends.
+
+There are certain rules to be followed for placing ships:
+    1. Each ship must be placed in a unique slot, i.e, no ship may be placed on top of another.
+    2. Every ship must be placed within the grid, a slot of 'a9' for a ship of length 3 is not viable.
+
+After the grid slot has been selected, the user is then asked to provide an orientation for the ship, either 'H'(can be either capital or not) for horizontal or 'V' for vertical.
+If the ship collides with another ship the user has placed, the user will be told of it and has to provide another grid slot or orientation.
+
+After filling all the grid slots, the user can then see both their grid completely and the AI's grid, with the ships hidden.
+Once the grids are visible, the game starts as soon as the user gives the first grid slot with the same naming convention as above when we assigned ships, to shoot at that slot on the enemy's grid.
+After each round, the user gets the information whether they hit a ship, sunk a ship or completely missed a ship as well as whether the AI hit or not.
+The game ends when either the user or AI destroys/sinks all the ships of the other player.
+
+
