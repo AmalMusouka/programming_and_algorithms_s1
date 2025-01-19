@@ -183,8 +183,8 @@ def set_player_grid(grid):
     get_ship(4, grid)
     for _ in range(2):
         get_ship(3, grid)
-    # for _ in range(3):
-    #     get_ship(2, grid)
+    for _ in range(3):
+        get_ship(2, grid)
 
 def generate_ai_coordinates():
     return random.randint(0, 9), random.randint(0, 9)
