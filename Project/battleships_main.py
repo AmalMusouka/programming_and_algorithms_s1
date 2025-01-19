@@ -118,22 +118,22 @@ def check_if_in_bounds(x, y, length, orientation=None):
             return False
     return True
 
+def check_if_ship(x, y, grid):
+    if isinstance(grid.matrix[x][y], Ship):
+        return True
+    return False
+
 def check_if_hit(x, y, grid):
     if isinstance(grid.matrix[x][y], Ship):
         if (x, y) in grid.matrix[x][y].hit_pos:
             return True
-        else:
-            return False
 
-    if grid.matrix[x][y] == '.':
-        return False
-    return True
+    if grid.matrix[x][y] == 'X':
+        return True
+    return False
 
 def get_coordinates(length):
-    if length == 3:
-        print(f"Choose the coordinates and orientation of your only 3-grid box long ship(A0 - J9)")
-    else:
-        print(f"Choose the coordinates and orientation of your {length}-grid box long ship(A0 - J9)")
+    print(f"Choose the coordinates and orientation of your {length}-grid box long ship(A0 - J9)")
     correct_grid_slot = False
     while not correct_grid_slot:
         grid_slot = input("Starting Coordinates:")
@@ -297,13 +297,14 @@ def get_ai_strike_coordinates(ai_shots):
         if (x, y) not in ai_shots:
             return x, y
 
-def ai_move(player_grid, ai_shots: list, ai_last_ship_hit: dict):
+def ai_move(player_grid, ai_shots: list, ai_last_ship_hit: list):
     orientation = None
     hit_multi_grid_ship = False
     x, y = get_ai_strike_coordinates(ai_shots)
 
     if ai_last_ship_hit:
-        prev_x, prev_y = ai_last_ship_hit[0]
+        prev_x, prev_y = ai_last_ship_hit[0], ai_last_ship_hit[1]
+        orientation = ai_last_ship_hit[2]
         print(player_grid)
         # check if the coordinates have already been struck or the previous strike zone sunk a ship
         if isinstance(player_grid.matrix[prev_x][prev_y], Ship):
@@ -311,51 +312,71 @@ def ai_move(player_grid, ai_shots: list, ai_last_ship_hit: dict):
                 x, y = prev_x, prev_y
                 hit_multi_grid_ship = True
             else:
-                ai_last_ship_hit = {}
+                ai_last_ship_hit = []
 
         if player_grid.matrix[x][y].value == '⏺' and hit_multi_grid_ship:
-            if check_if_in_bounds(x, y + 1, 1) and not check_if_hit(x, y + 1, player_grid):
-                y = y + 1
-                orientation = 'v'
-            elif check_if_in_bounds(x, y - 1, 1) and not check_if_hit(x, y - 1, player_grid):
-                y = y - 1
-                orientation = 'v'
-            elif check_if_in_bounds(x + 1, y, 1) and not check_if_hit(x + 1, y, player_grid):
-                x = x + 1
-                orientation = 'h'
-            else:
-                x = x - 1
-                orientation = 'h'
+            for i in range(1,4):
 
-            move_hit = ai_check(x, y, player_grid)
+                if check_if_in_bounds(x, y + i, 1) and orientation != 'h':
+                    if not check_if_hit(x, y + i, player_grid):
+                        if check_if_ship(x, y + i, player_grid):
+                            y = y + i
+                            orientation = 'v'
+                            break
 
-    else:
-        move_hit = False, x, y
+                if check_if_in_bounds(x, y - i, 1) and orientation != 'h':
+                    if not check_if_hit(x, y - i, player_grid):
+                        if check_if_ship(x, y - i, player_grid):
+                            y = y + i
+                            orientation = 'v'
+                            break
+
+                if check_if_in_bounds(x - i, y, 1) and orientation != 'v':
+                    if not check_if_hit(x - i, y, player_grid):
+                        if check_if_ship(x - i, y, player_grid):
+                            x = x - i
+                            orientation = 'h'
+                            break
+
+                if check_if_in_bounds(x + i, y, 1) and orientation != 'v':
+                    if not check_if_hit(x + i, y, player_grid):
+                        if check_if_ship(x + i, y, player_grid):
+                            x = x + i
+                            orientation = 'h'
+                            break
+        else:
+            x, y = get_ai_strike_coordinates(ai_shots)
+
+
+    move_hit = ai_check(x, y, player_grid)
+
 
     if move_hit[0]:
-        ai_last_ship_hit[(move_hit[1], move_hit[2])] = orientation
+        if not hit_multi_grid_ship:
+            ai_last_ship_hit.extend((move_hit[1], move_hit[2], orientation))
         print(f"AI hit a ship at {(chr(move_hit[1] + ord('a'))).upper()}{move_hit[2]}")
+        player_grid.matrix[x][y].hit_pos.append((x, y))
         player_grid.grid_hit.append((x, y))
-    else:
-        ai_shots.append((move_hit[1], move_hit[2]))
+
+    ai_shots.append((move_hit[1], move_hit[2]))
 
     print(move_hit)
 
 
-def start_game(slots = 13):
-    # game with 8 ships, includes one 3 block long ship, three 2 block long ships and four 1 block long ships = 3 + 6 + 4 = 13 grid_slots
+def start_game(slots = 18):
+    # game with 8 ships, includes one 4 block long ship, two 3 block long ships and four 2 block long ships = 4 + 6 + 8 = 18 grid_slots
     player_grid = Grid(slots)
     set_player_grid(player_grid)
     ai_grid = Grid(slots)
     set_ai_grid(ai_grid)
     turn = 0
     ai_shots = []
-    ai_shots_hit = []
+    ai_last_ship_hit = []
     display_live_grids(player_grid, ai_grid)
     while ai_grid.slot_count != 0:
         players_move(player_grid, ai_grid)
         turn += 1
-        ai_move(player_grid, ai_shots, ai_shots_hit)
+        ai_move(player_grid, ai_shots, ai_last_ship_hit)
         display_live_grids(player_grid, ai_grid)
 
     print("Game Over")
