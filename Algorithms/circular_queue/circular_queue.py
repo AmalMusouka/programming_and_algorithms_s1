@@ -26,7 +26,6 @@ class CircularQueue:
         self.queue = [None] * x
         self.head = len(self.queue)
         self.tail = len(self.queue) - 1
-        self.prev_len= 0
         self.size = 0
         self.sum = 0
 
