@@ -360,7 +360,7 @@ def ai_move(player_grid, ai_shots: list, ai_last_ship_hit: list):
 
     ai_shots.append((move_hit[1], move_hit[2]))
 
-    print(move_hit)
+    # print(move_hit)
 
 
 def start_game(slots = 18):
