@@ -1,7 +1,7 @@
 import random
 
 class Ship:
-    """The main Ship class that stores the (x, y) co-ordinates, length, position and orientation of the Ship as well as all its (x, y) coordinates that aren't the current co-ordinates.
+    """The main Ship class that stores the (x, y) co-ordinates, length, position and orientation of the Ship as well as all its (x, y) co-ordinates that aren't the current co-ordinates.
     Also stores whether the ship is afloat or has sunk, and where all it has been shot."""
     def __init__(self, x, y, length, orientation=None, sunk=False):
         self.x = x
@@ -314,7 +314,7 @@ def players_move(player_grid, ai_grid):
 
     if ai_grid.matrix[x][y] == ".":
         ai_grid.matrix[x][y] = "X"
-        print("YOU MISSED!")
+        print("\nYOU MISSED!\n")
     elif check_if_hit(x, y, ai_grid):
         print("You already shot here, choose another grid slot.")
         return players_move(player_grid, ai_grid)
@@ -322,10 +322,10 @@ def players_move(player_grid, ai_grid):
         ai_grid.matrix[x][y].hit_count += 1
         ai_grid.matrix[x][y].hit_pos.append((x,y))
         if ai_grid.matrix[x][y].hit_count == ai_grid.matrix[x][y].length:
-            print("YOU SUNK A SHIP!!")
+            print("\nYOU SUNK A SHIP!!\n")
             ai_grid.matrix[x][y].sunk = True
         else:
-            print("YOU HIT A SHIP!")
+            print("\nYOU HIT A SHIP!\n")
         ai_grid.slot_count -= 1
         ai_grid.grid_hit.append((x, y))
 
@@ -374,67 +374,56 @@ def ai_move(player_grid, ai_shots: list, ai_last_ship_hit: list):
                 x, y = prev_x, prev_y
                 hit_multi_grid_ship = True
             else:
-                ai_last_ship_hit.clear()
+                del ai_last_ship_hit[:3]
+
+                if ai_last_ship_hit:
+                    hit_multi_grid_ship = True
+                    x, y = ai_last_ship_hit[0], ai_last_ship_hit[1]
+                    orientation = ai_last_ship_hit[2]
 
         if hit_multi_grid_ship and player_grid.matrix[x][y].value == '⏺':
 
-            for i in range(1,4):
-                if check_if_in_bounds(x, y + i, 1) and orientation != 'v' and direction not in ['L', 'U', 'D']:
+            for i in range(1,9):
+                if check_if_in_bounds(x, y + i, 1):
                     if not check_if_hit(x, y + i, player_grid):
                         y = y + i
-                        orientation = 'h'
                         direction = 'R'
                         break
                     else:
-                        if check_if_ship(x, y + i, player_grid):
-                            orientation = 'h'
-                            direction = 'R'
-                        else:
+                        if not check_if_ship(x, y + i, player_grid):
                             direction = None
                             break
 
             if direction == 'L' or direction is None:
-                for i in range(1, 4):
-                    if check_if_in_bounds(x, y - i, 1) and orientation != 'v' and direction not in ['R', 'U', 'D']:
+                for i in range(1, 9):
+                    if check_if_in_bounds(x, y - i, 1):
                         if not check_if_hit(x, y - i, player_grid):
                             y = y - i
-                            orientation = 'h'
                             direction = 'L'
                             break
                         else:
-                            if check_if_ship(x, y - i, player_grid):
-                                orientation = 'h'
-                                direction = 'L'
-                            else:
+                            if not check_if_ship(x, y - i, player_grid):
                                 direction = None
                                 break
 
             if direction is None:
-                for i in range(1, 4):
-                    if check_if_in_bounds(x - i, y, 1) and orientation != 'h' and direction not in ['L', 'R', 'D']:
+                for i in range(1, 9):
+                    if check_if_in_bounds(x - i, y, 1):
                         if not check_if_hit(x - i, y, player_grid):
                             x = x - i
-                            orientation = 'v'
                             direction = 'U'
                             break
                         else:
-                            if check_if_ship(x - i, y, player_grid):
-                                orientation = 'v'
-                                direction = 'U'
-                            else:
+                            if not check_if_ship(x - i, y, player_grid):
                                 direction = 'D'
                                 break
 
             if direction == 'D' or direction is None:
-                for i in range(1, 4):
-                    if check_if_in_bounds(x + i, y, 1) and orientation != 'h' and direction not in ['L', 'R', 'U']:
+                for i in range(1, 9):
+                    if check_if_in_bounds(x + i, y, 1):
                         if not check_if_hit(x + i, y, player_grid):
                             x = x + i
-                            orientation = 'v'
                             break
-                        else:
-                            if check_if_ship(x + i, y, player_grid):
-                                orientation = 'v'
         else:
             x, y = get_ai_strike_coordinates(ai_shots)
     move_hit = ai_check(x, y, player_grid)
@@ -443,7 +432,7 @@ def ai_move(player_grid, ai_shots: list, ai_last_ship_hit: list):
         if isinstance(player_grid.matrix[x][y], Ship):
             if not player_grid.matrix[x][y].sunk:
                 ai_last_ship_hit.extend([move_hit[1], move_hit[2], orientation])
-        print(f"AI HIT A SHIP AT {(chr(move_hit[1] + ord('a'))).upper()}{move_hit[2]}")
+        print(f"\nAI HIT A SHIP AT {(chr(move_hit[1] + ord('a'))).upper()}{move_hit[2]}\n")
         player_grid.matrix[x][y].hit_pos.append((x, y))
         player_grid.grid_hit.append((x, y))
 
